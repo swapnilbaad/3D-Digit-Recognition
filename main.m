@@ -2,10 +2,9 @@ clc
 close all
 clear all
 
-files = dir("digits_3d_training_data\digits_3d\*.mat");
-
+files = dir("digits_3d_training_data\digits_3d\training_data\\*.mat");
 for i=1:length(files)
-    pos{i} = load("digits_3d_training_data\digits_3d"+files(i).name);
+    pos{i} = load("digits_3d_training_data\digits_3d\training_data\"+files(i).name);
     class{i} = floor(i/101);
 end
 
