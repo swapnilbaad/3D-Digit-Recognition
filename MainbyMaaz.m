@@ -50,7 +50,7 @@ dataset = {normalised_data{1:n}};
 randIndx = randperm(n);
 
 %k = floor(sqrt(n));
-k = 16;
+k = 13;
 
 %Training data and class uptill 70%
 Training = dataset(:,randIndx(1:round(0.7*n))); 
