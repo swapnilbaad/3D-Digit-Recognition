@@ -1,18 +1,19 @@
 function [dataNew, classMember] = dataPreProcessing(Data)
 %% This function performs the task of removing outliers
 %% -----------------------------------------------------
-%% dataNew - Time series data structure after outlier's removal
+%% dataNew - 3d dataset after outlier's removal
 %% classMember - New array containing class labels
 
-%Seperate time series data row from Data structure 
+%% Seperate time series data row from Data structure 
 dataRow = {};
 for i = 1:length(Data)
     dataRow{i} =  Data{1,i}.pos(:,:);
 end
+
 %Seperate classes label row from Data structure 
 classRow = [Data{2,:}];
 
-%Dimension 1
+%% Dimension 1
 dim1 = [];
 for i = 1:length(Data)
     dim1 = [dim1; Data{1,i}.pos(:,1)];
@@ -35,7 +36,7 @@ for j = 1:length(dim1Data)
 end
 
 
-%Dimension 2
+%% Dimension 2
 dim2 = [];
 for i = 1:length(Data)
     dim2 = [dim2; Data{1,i}.pos(:,2)];
@@ -58,7 +59,7 @@ for j = 1:length(dim2Data)
     end
 end
 
-%Dimension 3
+%% Dimension 3
 dim3 = [];
 for i = 1:length(Data)
     dim3 = [dim3; Data{1,i}.pos(:,3)];
@@ -81,7 +82,7 @@ for j = 1:length(dim3Data)
     end
 end
 
-%Get all indexes for outliers from 3 dimensions
+%% Get all indexes for outliers from 3 dimensions
 unionDim1Dim2 = union(removeIdx,removeIdx2);
 unionAll = union(unionDim1Dim2, removeIdx3);
 
