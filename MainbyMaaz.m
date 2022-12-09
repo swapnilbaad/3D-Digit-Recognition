@@ -10,10 +10,8 @@ end
 
 Data = [pos; class];
 
-%normalised_data = min_max_normalization(Data);
-
+%%Plotting
 colour = [[1 0 0];[0 1 0];[0 0 1];[0 1 1];[1 0 1];[1 1 0];[0 0.4470 0.7410];[0.8500 0.3250 0.0980];[0.8500 0.3250 0.0980];[0.9290 0.6940 0.1250]];
-
 %Plot the un normalised data
 % for i =1:n
 %     a = Data{1,i}.pos;
@@ -28,53 +26,62 @@ colour = [[1 0 0];[0 1 0];[0 0 1];[0 1 1];[1 0 1];[1 1 0];[0 0.4470 0.7410];[0.8
 %     hold on
 % end
 
-%Create an array for class 
-class = [Data{2,:}];
 
-normalised_data = min_max_normalization(Data);
+%Pre process data
+[dataNew, classMember] = dataPreProcessing(Data);
 
+%Normalize processed data
+normalised_data = min_max_normalization(dataNew);
+n = length(normalised_data);
 
-n = 1000;
 %Classes for 2 digits
-class = class(1:n);
-classes = zeros(size(class)); 
-classes(1,class== 0) = 1; classes(2, class == 1) = 1;
-classes(3,class== 2) = 1; classes(4,class== 3) = 1; 
-classes(5,class== 4) = 1; classes(6, class == 5) = 1;
-classes(7,class== 6) = 1; classes(8,class== 7) = 1; 
-classes(9,class== 8) = 1; classes(10,class== 9) = 1; 
+classMember = classMember(1:n);
+classes = zeros(size(classMember)); 
+classes(1,classMember== 0) = 1; classes(2, classMember == 1) = 1;
+classes(3,classMember== 2) = 1; classes(4,classMember== 3) = 1; 
+classes(5,classMember== 4) = 1; classes(6, classMember == 5) = 1;
+classes(7,classMember== 6) = 1; classes(8,classMember== 7) = 1; 
+classes(9,classMember== 8) = 1; classes(10,classMember== 9) = 1; 
 
 dataset = {normalised_data{1:n}};
 
-%%Divide the data
-randIndx = randperm(n);
 
-%k = floor(sqrt(n));
-k = 13;
+%%Divide the data into testing and training 
+
+% Cross varidation (train: 70%, test: 30%)
+cv = cvpartition(n,'HoldOut',0.25);
+idx = cv.test;
 
 %Training data and class uptill 70%
-Training = dataset(:,randIndx(1:round(0.7*n))); 
-classTrain = classes(:,randIndx(1:round(0.7*n))); 
-
+Training = dataset(:,~idx); 
+classTrain = classes(:,~idx); 
 %Testing data and class 30%
-Testing = dataset(:,randIndx(round(0.7*n)+1:end));
-classTest = classes(:,randIndx(round(0.7*n)+1:end));
+Testing = dataset(:,idx);
+classTest = classes(:,idx);
 
 
-%Value of K decreases everytime same two classes have equal highest number
-%of samples
-C= 0;
-while(C == 0)
-%     k = k-1;
-    %Testing data classified in classes in C 
-    C = knn(classTrain,Training,Testing, k);
+k = 7;
+accuracy = [];
+%Simulation 
+for d = 1:length(k)
+    for l = 1:1
+        %Value of K decreases everytime same two classes have equal highest number
+        %of samples
+        C= 0;
+        while(C == 0)
+        %     k = k-1;
+            %Testing data classified in classes in C 
+            C = knn(classTrain,Training,Testing, k(d));
+        end
+        
+        
+        %Compare output of algo with training class for accuracy
+        data_miss = sum(sum(C~=classTest))/2;
+        
+        %Accuracy
+        accuracy(l,d) = (length(classTest)-data_miss)/length(classTest)*100;
+    end
 end
+% sprintf("Value of K : %d", k)
 
-
-%Compare output of algo with training class for accuracy
-data_miss = sum(sum(C~=classTest))/2;
-
-%Accuracy
-accuracy = (length(classTest)-data_miss)/length(classTest)*100
-sprintf("Value of K : %d", k)
 

@@ -14,7 +14,6 @@ for n = 1:length(testData)
             %Last element is the actual distance b/w the 2 time series
             dtw = dtwMatrix(size(dtwMatrix,1),size(dtwMatrix,2));
 
-            %
             dtwSum = dtwSum + dtw;
         end
         dist(i) = dtwSum;
